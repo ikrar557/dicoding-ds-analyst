@@ -29,7 +29,7 @@ with col3:
 # Sidebar untuk input filter
 st.sidebar.header("Filter Options")
 selected_season = st.sidebar.selectbox("Musim", options=['Semua Musim'] + list(days_df['season'].unique()))
-selected_year = st.sidebar.selectbox("Pilih Tahun:", ["All Years", 2011, 2012])
+selected_year = st.sidebar.selectbox("Pilih Tahun:", ["Semua Tahun", 2011, 2012])
 
 # Pertanyaan 1: Bagaimana cuaca memengaruhi jumlah peminjaman sepeda?
 st.header("Heatmap Jumlah Peminjaman Sepeda Berdasarkan Jam dan Cuaca")
@@ -60,7 +60,7 @@ st.pyplot(plt)
 # Pertanyaan 2: Apakah terdapat perbedaan dalam penggunaan sepeda berdasarkan musim?
 st.header("Grafik Jumlah Peminjaman Sepeda Antar Musim")
 
-if selected_season == 'All Seasons':
+if selected_season == 'Semua Musim':
     total_rentals_by_season = days_df.groupby('season')['count'].sum().reset_index()
 else:
     total_rentals_by_season = days_df[days_df['season'] == selected_season].groupby('season')['count'].sum().reset_index()
@@ -90,7 +90,7 @@ for i in range(len(total_rentals_by_season)):
     )
 
 ax.set_title("Grafik Jumlah Peminjaman Sepeda Antar Musim", loc="center", fontsize=30)
-ax.set_ylabel("Musim", fontsize=20)
+ax.set_ylabel(None)
 ax.set_xlabel("Jumlah Peminjaman", fontsize=20)
 ax.tick_params(axis='x', labelsize=20)
 ax.tick_params(axis='y', labelsize=20)
@@ -113,7 +113,7 @@ monthly_rentals = days_df.groupby(['year', 'month']).agg({
 
 fig, axes = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
 
-if selected_year == "All Years":
+if selected_year == "Semua Tahun":
     for year in [2011, 2012]:
         data_year = monthly_rentals[monthly_rentals['year'] == year]
         axes[year - 2011].plot(
