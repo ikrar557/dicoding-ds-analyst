@@ -175,7 +175,72 @@ plt.title('Pengaruh Hari Kerja dan Hari Libur terhadap Penggunaan Sepeda')
 
 st.pyplot(plt)
 
-# Analisis optional dengan clustering
+# Analisis optional 
+
+## RFM analysis
+hours_df['dteday'] = pd.to_datetime(hours_df['dteday'])
+
+current_date = pd.to_datetime(hours_df['dteday']).max()
+
+rfm_df = hours_df.groupby('registered').agg(
+    Recency=('dteday', lambda x: (current_date - x.max()).days), 
+    Frequency=('dteday', 'count'),
+    Monetary=('count', 'sum')
+).reset_index()
+
+rfm_df.columns = ['customer_id', 'Recency', 'Frequency', 'Monetary']
+
+rfm_df = rfm_df.sort_values(by='Monetary', ascending=False)
+
+st.title("RFM Analysis")
+
+plt.figure(figsize=(10, 6))
+colors = ["#72BCD4"] * 5
+sns.barplot(
+    y="Recency",
+    x="customer_id",
+    data=rfm_df.sort_values(by="Recency", ascending=False).head(5),
+    palette=colors,
+)
+plt.ylabel("Recency (days)", fontsize=15)
+plt.xlabel("Customer ID", fontsize=15)
+plt.title("Top 5 by Recency (days)", loc="center", fontsize=18)
+plt.xticks(fontsize=12)
+plt.tight_layout()
+st.pyplot(plt) 
+plt.clf()
+
+plt.figure(figsize=(10, 6))
+sns.barplot(
+    y="Frequency",
+    x="customer_id",
+    data=rfm_df.sort_values(by="Frequency", ascending=False).head(5),
+    palette=colors,
+)
+plt.ylabel("Frequency", fontsize=15)
+plt.xlabel("Customer ID", fontsize=15)
+plt.title("Top 5 by Frequency", loc="center", fontsize=18)
+plt.xticks(fontsize=12)
+plt.tight_layout()
+st.pyplot(plt)
+plt.clf()
+
+plt.figure(figsize=(10, 6))
+sns.barplot(
+    y="Monetary",
+    x="customer_id",
+    data=rfm_df.sort_values(by="Monetary", ascending=False).head(5),
+    palette=colors,
+)
+plt.ylabel("Monetary", fontsize=15)
+plt.xlabel("Customer ID", fontsize=15)
+plt.title("Top 5 by Monetary", loc="center", fontsize=18)
+plt.xticks(fontsize=12)
+plt.tight_layout()
+st.pyplot(plt)
+plt.clf()
+
+## Clustering analysis
 st.title("Analisis optional dengan clustering")
 st.subheader("Analisis Peminjaman Sepeda Berdasarkan Kategori Frekuensi")
 
