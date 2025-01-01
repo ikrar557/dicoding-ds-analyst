@@ -90,7 +90,7 @@ for i in range(len(total_rentals_by_season)):
     )
 
 ax.set_title("Grafik Jumlah Peminjaman Sepeda Antar Musim", loc="center", fontsize=30)
-ax.set_ylabel(None)
+ax.set_ylabel("Musim", fontsize=20)
 ax.set_xlabel("Jumlah Peminjaman", fontsize=20)
 ax.tick_params(axis='x', labelsize=20)
 ax.tick_params(axis='y', labelsize=20)
@@ -136,16 +136,23 @@ if selected_year == "Semua Tahun":
         axes[year - 2011].legend(title="Tipe Pengguna", fontsize=10)
         axes[year - 2011].grid(alpha=0.3)
 
+    # Terapkan xticks dan xticklabels dengan rotasi 45 derajat
+    axes[1].set_xticks(range(len(data_year['month'])))
+    axes[1].set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], rotation=45)
+
 elif selected_year in [2011, 2012]:
     data_year = monthly_rentals[monthly_rentals['year'] == selected_year]
-    axes[0].plot(
+    fig, ax = plt.subplots(figsize=(12, 5))  # Buat ulang hanya satu subplot
+
+    ax.plot(
         data_year['month'], 
         data_year['registered'], 
         marker='o', 
         label='Pengguna Registered', 
         color='blue'
     )
-    axes[0].plot(
+    ax.plot(
         data_year['month'], 
         data_year['casual'], 
         marker='o', 
@@ -153,16 +160,15 @@ elif selected_year in [2011, 2012]:
         color='orange'
     )
     
-    axes[0].set_title(f'Penyewaan Sepeda Bulanan Tahun {selected_year}', fontsize=14)
-    axes[0].set_ylabel('Jumlah Penyewaan', fontsize=12)
-    axes[0].legend(title="Tipe Pengguna", fontsize=10)
-    axes[0].grid(alpha=0.3)
-    
-    axes[1].remove()
+    ax.set_title(f'Penyewaan Sepeda Bulanan Tahun {selected_year}', fontsize=14)
+    ax.set_ylabel('Jumlah Penyewaan', fontsize=12)
+    ax.legend(title="Tipe Pengguna", fontsize=10)
+    ax.grid(alpha=0.3)
 
-axes[0].set_xticks(range(len(data_year['month'])))
-axes[0].set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'])
+    # Pastikan label bulan muncul di sumbu x dengan rotasi 45 derajat
+    ax.set_xticks(range(len(data_year['month'])))
+    ax.set_xticklabels(['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], rotation=45)
 
 plt.tight_layout()
 st.pyplot(fig)
