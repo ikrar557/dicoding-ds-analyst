@@ -1,8 +1,8 @@
-numpy
-pandas
-scipy
-matplotlib
-seaborn
-jupyter
-streamlit
-babel
+babel==2.16.0
+jupyter==1.1.1
+matplotlib==3.10.0
+numpy==2.2.1
+pandas==2.2.3
+scipy==1.14.1
+seaborn==0.13.2
+streamlit==1.41.1

@@ -176,100 +176,97 @@ plt.title('Pengaruh Hari Kerja dan Hari Libur terhadap Penggunaan Sepeda')
 st.pyplot(plt)
 
 # Analisis optional 
+st.title("Analisis Optional")
 
 ## RFM analysis
 hours_df['dteday'] = pd.to_datetime(hours_df['dteday'])
 
-current_date = pd.to_datetime(hours_df['dteday']).max()
+current_date = max(hours_df['dteday'])
 
 rfm_df = hours_df.groupby('registered').agg(
-    Recency=('dteday', lambda x: (current_date - x.max()).days), 
+    Recency=('dteday', lambda x: (current_date - x.max()).days),
     Frequency=('dteday', 'count'),
     Monetary=('count', 'sum')
 ).reset_index()
 
-rfm_df.columns = ['customer_id', 'Recency', 'Frequency', 'Monetary']
+st.subheader("RFM Analysis")
 
-rfm_df = rfm_df.sort_values(by='Monetary', ascending=False)
-
-st.title("RFM Analysis")
-
-plt.figure(figsize=(10, 6))
+fig1, ax1 = plt.subplots(figsize=(10, 6))
 colors = ["#72BCD4"] * 5
+
 sns.barplot(
     y="Recency",
-    x="customer_id",
+    x="registered",
     data=rfm_df.sort_values(by="Recency", ascending=False).head(5),
     palette=colors,
+    ax=ax1,
 )
-plt.ylabel("Recency (days)", fontsize=15)
-plt.xlabel("Customer ID", fontsize=15)
-plt.title("Top 5 by Recency (days)", loc="center", fontsize=18)
-plt.xticks(fontsize=12)
-plt.tight_layout()
-st.pyplot(plt) 
-plt.clf()
+ax1.set_ylabel("Recency (days)", fontsize=15)
+ax1.set_xlabel('Registered ID', fontsize=15)
+ax1.set_title("Top 5 Customers by Recency (days)", loc="center", fontsize=18)
+ax1.tick_params(axis="x", labelsize=12)
 
-plt.figure(figsize=(10, 6))
+st.pyplot(fig1)
+
+fig2, ax2 = plt.subplots(figsize=(10, 6))
+
 sns.barplot(
     y="Frequency",
-    x="customer_id",
+    x="registered",
     data=rfm_df.sort_values(by="Frequency", ascending=False).head(5),
     palette=colors,
+    ax=ax2,
 )
-plt.ylabel("Frequency", fontsize=15)
-plt.xlabel("Customer ID", fontsize=15)
-plt.title("Top 5 by Frequency", loc="center", fontsize=18)
-plt.xticks(fontsize=12)
-plt.tight_layout()
-st.pyplot(plt)
-plt.clf()
+ax2.set_ylabel("Frequency", fontsize=15)
+ax2.set_xlabel('Registered ID', fontsize=15)
+ax2.set_title("Top 5 Customers by Frequency", loc="center", fontsize=18)
+ax2.tick_params(axis="x", labelsize=12)
 
-plt.figure(figsize=(10, 6))
+st.pyplot(fig2)
+
+fig3, ax3 = plt.subplots(figsize=(10, 6))
+
 sns.barplot(
     y="Monetary",
-    x="customer_id",
+    x="registered",
     data=rfm_df.sort_values(by="Monetary", ascending=False).head(5),
     palette=colors,
+    ax=ax3,
 )
-plt.ylabel("Monetary", fontsize=15)
-plt.xlabel("Customer ID", fontsize=15)
-plt.title("Top 5 by Monetary", loc="center", fontsize=18)
-plt.xticks(fontsize=12)
-plt.tight_layout()
-st.pyplot(plt)
-plt.clf()
+ax3.set_ylabel("Monetary", fontsize=15)
+ax3.set_xlabel('Registered ID', fontsize=15)
+ax3.set_title("Top 5 Customers by Monetary", loc="center", fontsize=18)
+ax3.tick_params(axis="x", labelsize=12)
+
+st.pyplot(fig3)
 
 ## Clustering analysis
-st.title("Analisis optional dengan clustering")
-st.subheader("Analisis Peminjaman Sepeda Berdasarkan Kategori Frekuensi")
+st.subheader("Clustering Analysis")
 
-def frequency_group(value):
-    if value >= 100:
-        return 'Sangat Tinggi'
-    elif value >= 50:
-        return 'Tinggi'
-    elif value >= 10:
+def temperature_group(value):
+    if value <= 0.33:
+        return 'Rendah'
+    elif value <= 0.66:
         return 'Sedang'
     else:
-        return 'Rendah'
+        return 'Tinggi'
 
-hours_df['Frequency_Group'] = hours_df['count'].apply(frequency_group)
+hours_df['Temperature_Group'] = hours_df['temp'].apply(temperature_group)
 
-frequency_counts = hours_df['Frequency_Group'].value_counts()
+temperature_counts = hours_df['Temperature_Group'].value_counts()
 
-colors = ["#90CAF9", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
+plt.figure(figsize=(10, 6))
 
-fig, ax = plt.subplots(figsize=(10, 6))
+sns.barplot(x=temperature_counts.index, y=temperature_counts.values, palette='viridis')
 
-sns.barplot(x=frequency_counts.index, y=frequency_counts.values, palette=colors, ax=ax)
+plt.title('Distribusi Jumlah Peminjaman Berdasarkan Kategori Suhu', fontsize=16)
+plt.xlabel(None)
+plt.ylabel('Jumlah Peminjaman', fontsize=14)
 
-ax.set_title('Distribusi Jumlah Peminjaman Berdasarkan Kategori Frekuensi', fontsize=16)
-ax.set_xlabel(None)
-ax.set_ylabel('Jumlah Peminjaman', fontsize=14)
+for i, value in enumerate(temperature_counts.values):
+    plt.text(i, value, str(value), ha='center', va='bottom', fontsize=12)
 
-for i, value in enumerate(frequency_counts.values):
-    ax.text(i, value, str(value), ha='center', va='bottom', fontsize=12)
+plt.tight_layout()
 
-st.pyplot(fig)
+st.pyplot(plt)
 
